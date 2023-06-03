@@ -3,7 +3,7 @@
 
 import { ObjectId } from 'mongodb';
 
-import DbClient from './mongo-db-client.js'
+import DbClient from './db-client.js'
 
 const DB_NAME = 'e-com';
 

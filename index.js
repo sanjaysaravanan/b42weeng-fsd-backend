@@ -5,6 +5,7 @@ import cors from 'cors';
 import DbClient from './Database/db-client.js';
 
 import authRouter from './routes/auth/authentication.js';
+import productRouter from './routes/products/products.js';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(myLogger);
 
 // prefix path router without prefix
 app.use("/auth", authRouter);
+app.use("/products", productRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://${HOSTNAME}:${PORT}/`);
