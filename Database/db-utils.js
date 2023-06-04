@@ -51,7 +51,7 @@ const deleteEntity = async (entityName, entityId) => {
     { 'id': entityId });
 }
 
-const findWithQuery = async (entityName, query) => {
+const findOneWithQuery = async (entityName, query) => {
   return await DbClient.db(DB_NAME).collection(entityName).findOne(
     query,
     {
@@ -62,12 +62,25 @@ const findWithQuery = async (entityName, query) => {
   );
 }
 
+const findAllWithQuery = async (entityName, query) => {
+  return await DbClient.db(DB_NAME).collection(entityName).find(
+    query,
+    {
+      projection: {
+        _id: 0
+      }
+    }
+  ).toArray();
+}
+
+
 export {
   readAll,
   readOneEntity,
   createEntity,
   updateEntity,
   deleteEntity,
-  findWithQuery
+  findAllWithQuery,
+  findOneWithQuery
 }
 

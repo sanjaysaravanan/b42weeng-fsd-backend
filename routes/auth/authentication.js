@@ -3,7 +3,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { createEntity, findWithQuery } from '../../Database/db-utils.js';
+import { createEntity, findOneWithQuery } from '../../Database/db-utils.js';
 
 const authRouter = express.Router();
 
@@ -26,7 +26,7 @@ authRouter.post('/register', async (req, res) => {
 authRouter.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  const userObj = await findWithQuery('users', { email });
+  const userObj = await findOneWithQuery('users', { email });
 
   await bcrypt.compare(password, userObj.password, async (err, result) => {
     console.log('Match', result);

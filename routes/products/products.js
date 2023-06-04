@@ -1,13 +1,20 @@
 // Products CRUD
 import express from 'express';
+import jwt from 'jsonwebtoken';
 
-import { createEntity, deleteEntity, findWithQuery, readAll, readOneEntity, updateEntity } from '../../Database/db-utils.js';
+import { createEntity, deleteEntity, findAllWithQuery, readAll, readOneEntity, updateEntity } from '../../Database/db-utils.js';
 import { checkTokenHeader } from '../../middleware/auth-check.js';
 
 const productRouter = express.Router();
 
-productRouter.get('/', checkTokenHeader, async (_req, res) => {
-  res.send(await readAll('products'));
+productRouter.get('/', checkTokenHeader, async (req, res) => {
+  // Get Query params
+  const { seller } = req.query;
+  if (seller) {
+    res.send(await findAllWithQuery('products', { seller }));
+  } else {
+    res.send(await readAll('products'));
+  }
 });
 
 productRouter.get('/:productId', checkTokenHeader, async (req, res) => {
@@ -15,10 +22,18 @@ productRouter.get('/:productId', checkTokenHeader, async (req, res) => {
   res.send(await readOneEntity('products', productId));
 });
 
+// Create a product
 productRouter.post('/', checkTokenHeader, async (req, res) => {
   const { body: prodObj } = req;
-  await createEntity('products', prodObj);
-  res.send({ msg: 'Product Created Successfully' });
+
+  jwt.verify(req.headers['accesstoken'], process.env.TOKEN_SECRET, async function (err, decoded) {
+    if (err) {
+      return;
+    }
+    // prepare the product obj to be stored in db
+    await createEntity('products', { ...prodObj, seller: decoded.email });
+    res.send({ msg: 'Product Created Successfully' });
+  });
 });
 
 productRouter.put('/:productId', checkTokenHeader, async (req, res) => {
